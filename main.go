@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 
+	"github.com/gobuffalo/packr"
 	"github.com/hashicorp/hcl"
 	"github.com/hashicorp/hcl/hcl/ast"
 	"github.com/segmentio/terraform-docs/doc"
@@ -18,7 +20,7 @@ var version = "dev"
 
 const usage = `
   Usage:
-    terraform-docs [--no-required] [json | md | markdown] <path>...
+    terraform-docs [--no-required] [--no-web] [json | md | markdown] <path>...
     terraform-docs -h | --help
 
   Examples:
@@ -37,6 +39,9 @@ const usage = `
 
     # Generate markdown tables of inputs and outputs, but don't print "Required" column
     $ terraform-docs --no-required md ./my-module
+
+	  # Generate web server to show the docs
+		$ terraform-docs ./my-module
 
     # Generate markdown tables of inputs and outputs for the given module and ../config.tf
     $ terraform-docs md ./my-module ../config.tf
@@ -94,20 +99,53 @@ func main() {
 
 	var out string
 
-	switch {
-	case args["markdown"].(bool):
-		out, err = print.Markdown(doc, printRequired)
-	case args["md"].(bool):
-		out, err = print.Markdown(doc, printRequired)
-	case args["json"].(bool):
-		out, err = print.JSON(doc)
-	default:
-		out, err = print.Pretty(doc)
+	if args["--no-web"].(bool) {
+		switch {
+		case args["markdown"].(bool):
+			out, err = print.Markdown(doc, printRequired)
+		case args["md"].(bool):
+			out, err = print.Markdown(doc, printRequired)
+		case args["json"].(bool):
+			out, err = print.JSON(doc)
+		default:
+			out, err = print.Pretty(doc)
+		}
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println(out)
+	} else {
+		out, err = print.JSON(doc) //load json
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		box := packr.NewBox("./assets")
+
+		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "text/html")
+			file, err := box.MustBytes("index.html")
+			if err == nil {
+				_, err := w.Write(file)
+				if err != nil {
+					log.Fatal(err)
+				}
+			} else {
+				fmt.Fprintf(w, "Unable to load index")
+			}
+			// fmt.Fprintf(w, "Go to /api for JSON <script type='text/javascript'>setTimeout(()=>{window.location='/api'},2000)</script>")
+		})
+
+		http.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			fmt.Fprintf(w, out)
+		})
+
+		http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(box)))
+
+		http.ListenAndServe(":8080", nil)
 	}
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println(out)
 }
