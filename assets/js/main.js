@@ -12,7 +12,7 @@ class Root extends React.Component {
     if (this.state.tf.Comment) {
       return (
         <div id="comment">
-          <h2>Comment</h2>
+          <h2 className="title">Comment</h2>
           <code>{this.state.tf.Comment}</code>
         </div>
       )
@@ -50,18 +50,19 @@ class Root extends React.Component {
 
   renderInputs() {
     if (this.state.tf.Inputs) {
-      var inputs = this.state.tf.Inputs.map((input) => {
-        return (
-          <div className="variable" key={input.Name}>
-            <h3>{input.Name}</h3>
-            { Object.entries(input).map(this.parseInput) }
-          </div>
-        )
-      });
       return (
         <div id="inputs">
-          <h2>Inputs</h2>
-          {inputs}
+          <h2 className="title">Inputs</h2>
+          {
+            this.state.tf.Inputs.map((input) => {
+              return (
+                <div className="box column content variable" key={input.Name}>
+                  <h3 className="subtitle">{input.Name}</h3>
+                  { Object.entries(input).map(this.parseInput) }
+                </div>
+              )
+            })
+          }
         </div>
       )
     }
@@ -71,10 +72,10 @@ class Root extends React.Component {
     if (this.state.tf.Outputs) {
       return (
         <div id="outputs">
-          <h2>Outputs</h2>
+          <h2 className="title">Outputs</h2>
           {this.state.tf.Outputs.map((output) => (
-            <div className="output" key={output.Name}>
-              <h3>{`${output.Name}`}</h3>: {`${output.Description}`}
+            <div className="box column content output" key={output.Name}>
+              <h3 className="subtitle">{`${output.Name}`}</h3>: {`${output.Description}`}
             </div>
           ))}
         </div>
@@ -90,9 +91,9 @@ class Root extends React.Component {
       return (
         <div className="container">
 
-          {this.renderComment()}
-          {this.renderInputs()}
-          {this.renderOutputs()}
+          <div className="columns"> {this.renderComment()} </div>
+          <div className="columns"> {this.renderInputs()} </div>
+          <div className="columns"> {this.renderOutputs()} </div>
 
         </div>
       )
