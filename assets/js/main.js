@@ -24,7 +24,7 @@ class Root extends React.Component {
       <React.Fragment/>
     } else if (entry[0] === "Description") {
       entry[1] !== "" ? (
-        <div className="input-entry" key={entry[0]}>
+        <div className="variable-entry" key={entry[0]}>
           <h4>{`${entry[0]}: `}</h4>
           {`${entry[1]}`}
         </div>
@@ -32,7 +32,7 @@ class Root extends React.Component {
     } else if (entry[0] === "Default") {
       let default_obj = entry[1];
       return default_obj !== null ? (
-        <div className="input-entry" key={entry[0]}>
+        <div className="variable-entry" key={entry[0]}>
           <h4>Default:</h4>
           <b>Type: </b>{`${default_obj.Type}`}<br/>
           <b>Value: </b><code>{`"${default_obj.Literal}"`}</code>
@@ -40,7 +40,7 @@ class Root extends React.Component {
       ) : (<React.Fragment key={entry[0]}/>);
     } else {
       return (
-        <div className="input-entry" key={entry[0]}>
+        <div className="variable-entry" key={entry[0]}>
           <h4>{`${entry[0]}: `}</h4>
           {`${entry[1]}`}
         </div>
@@ -52,7 +52,7 @@ class Root extends React.Component {
     if (this.state.tf.Inputs) {
       var inputs = this.state.tf.Inputs.map((input) => {
         return (
-          <div className="input" key={input.Name}>
+          <div className="variable" key={input.Name}>
             <h3>{input.Name}</h3>
             { Object.entries(input).map(this.parseInput) }
           </div>
