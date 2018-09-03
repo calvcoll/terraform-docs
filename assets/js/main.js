@@ -13,7 +13,16 @@ class Root extends React.Component {
       return (
         <div id="comment">
           <h2 className="title">Comment</h2>
-          <code>{this.state.tf.Comment}</code>
+          <code>
+            {this.state.tf.Comment.split('\n').map((line) => {
+              return (
+                <React.Fragment>
+                  {line}
+                  <br/>
+                </React.Fragment>
+              )
+            })}
+          </code>
         </div>
       )
     }
@@ -23,7 +32,7 @@ class Root extends React.Component {
     if (entry[0] === "Name") {
       <React.Fragment/>
     } else if (entry[0] === "Description") {
-      entry[1] !== "" ? (
+      return entry[1] !== "" ? (
         <div className="variable-entry" key={entry[0]}>
           <h4>{`${entry[0]}: `}</h4>
           {`${entry[1]}`}
@@ -51,14 +60,22 @@ class Root extends React.Component {
   renderInputs() {
     if (this.state.tf.Inputs) {
       return (
-        <div id="inputs">
+        <div id="columns inputs">
           <h2 className="title">Inputs</h2>
           {
             this.state.tf.Inputs.map((input) => {
+              const isRequired = input.Default !== null ? " is-primary" : "";
               return (
-                <div className="box column content variable" key={input.Name}>
-                  <h3 className="subtitle">{input.Name}</h3>
-                  { Object.entries(input).map(this.parseInput) }
+                <div className="panel content variable" key={input.Name}>
+                  <p className={"panel-heading" + isRequired}>
+                    <span class="icon has-text-warning">
+                      <i class="fas fa-exclamation-triangle"></i>
+                    </span>
+                    {input.Name}
+                  </p>
+                  <div className="panel-block">
+                    { Object.entries(input).map(this.parseInput) }
+                  </div>
                 </div>
               )
             })
@@ -71,11 +88,12 @@ class Root extends React.Component {
   renderOutputs() {
     if (this.state.tf.Outputs) {
       return (
-        <div id="outputs">
+        <div id="columns outputs">
           <h2 className="title">Outputs</h2>
           {this.state.tf.Outputs.map((output) => (
-            <div className="box column content output" key={output.Name}>
-              <h3 className="subtitle">{`${output.Name}`}</h3>: {`${output.Description}`}
+            <div className="panel content output" key={output.Name}>
+              <p className="panel-heading">{`${output.Name}`}</p>
+              <p className="panel-block">{`${output.Description}`}</p>
             </div>
           ))}
         </div>
@@ -89,13 +107,11 @@ class Root extends React.Component {
       return (<div className="container"/>)
     } else {
       return (
-        <div className="container">
-
-          <div className="columns"> {this.renderComment()} </div>
-          <div className="columns"> {this.renderInputs()} </div>
-          <div className="columns"> {this.renderOutputs()} </div>
-
-        </div>
+        <React.Fragment>
+          <div className="section">{this.renderComment()}</div>
+          <div className="section">{this.renderInputs()}</div>
+          <div className="section">{this.renderOutputs()}</div>
+        </React.Fragment>
       )
     }
   }
