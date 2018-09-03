@@ -21,6 +21,7 @@ var version = "dev"
 const usage = `
   Usage:
     terraform-docs [--no-required] [--no-web] [json | md | markdown] <path>...
+		terraform-docs [-p <port>] | [--port <port>] <path>...
     terraform-docs -h | --help
 
   Examples:
@@ -43,11 +44,15 @@ const usage = `
 	  # Generate web server to show the docs
 		$ terraform-docs ./my-module
 
+		# Generate web server to show the docs on a specific port
+		$ terraform-docs --port 8080 ./my-module
+
     # Generate markdown tables of inputs and outputs for the given module and ../config.tf
     $ terraform-docs md ./my-module ../config.tf
 
   Options:
     -h, --help     show help information
+		--port, -p		 Port to host web server [default: 4000]
 
 `
 
@@ -135,7 +140,6 @@ func main() {
 			} else {
 				fmt.Fprintf(w, "Unable to load index")
 			}
-			// fmt.Fprintf(w, "Go to /api for JSON <script type='text/javascript'>setTimeout(()=>{window.location='/api'},2000)</script>")
 		})
 
 		http.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
@@ -145,7 +149,14 @@ func main() {
 
 		http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(box)))
 
-		http.ListenAndServe(":8080", nil)
+		port := "4000"
+		if args["--port"] != nil {
+			port = args["--port"].(string)
+		}
+
+		listenAddr := ":" + port
+		log.Println("Listening on localhost", listenAddr)
+		http.ListenAndServe(listenAddr, nil)
 	}
 
 }
