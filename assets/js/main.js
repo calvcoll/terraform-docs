@@ -64,14 +64,18 @@ class Root extends React.Component {
           <h2 className="title">Inputs</h2>
           {
             this.state.tf.Inputs.map((input) => {
-              const isRequired = input.Default !== null ? " is-primary" : "";
+              const isRequired = input.Default === null;
               return (
-                <div className="panel content variable" key={input.Name}>
-                  <p className={"panel-heading" + isRequired}>
-                    <span class="icon has-text-warning">
-                      <i class="fas fa-exclamation-triangle"></i>
-                    </span>
-                    {input.Name}
+                <div className="panel variable" key={input.Name}>
+                  <p className="panel-heading">
+                    {
+                      isRequired? (
+                        <span class="icon has-text-warning">
+                          <i class="fas fa-exclamation-triangle"></i>
+                        </span>
+                      ): (<React.Fragment/>)
+                    }
+                  {input.Name}
                   </p>
                   <div className="panel-block">
                     { Object.entries(input).map(this.parseInput) }
@@ -91,7 +95,7 @@ class Root extends React.Component {
         <div id="columns outputs">
           <h2 className="title">Outputs</h2>
           {this.state.tf.Outputs.map((output) => (
-            <div className="panel content output" key={output.Name}>
+            <div className="panel output" key={output.Name}>
               <p className="panel-heading">{`${output.Name}`}</p>
               <p className="panel-block">{`${output.Description}`}</p>
             </div>
