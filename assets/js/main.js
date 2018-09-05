@@ -70,8 +70,8 @@ class Root extends React.Component {
                   <p className="panel-heading">
                     {
                       isRequired? (
-                        <span class="icon has-text-warning">
-                          <i class="fas fa-exclamation-triangle"></i>
+                        <span className="icon has-text-warning">
+                          <i className="fas fa-exclamation-triangle"></i>
                         </span>
                       ): (<React.Fragment/>)
                     }
