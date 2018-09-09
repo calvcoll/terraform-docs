@@ -111,7 +111,7 @@ class Root extends React.Component {
       return (<div className="container"/>)
     } else {
       return (
-        <React.Fragment>
+        <React.Fragment key="root_fragment">
           <div className="section">{this.renderComment()}</div>
           <div className="section">{this.renderInputs()}</div>
           <div className="section">{this.renderOutputs()}</div>
