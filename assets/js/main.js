@@ -3,6 +3,7 @@ class Root extends React.Component {
     super()
     this.sortInputs = this.sortInputs.bind(this);
     this.reloadState = this.reloadState.bind(this);
+    this.createNotification = this.createNotification.bind(this);
   }
 
   reloadState() {
@@ -17,6 +18,20 @@ class Root extends React.Component {
         showProgress: false
       })
     });
+  }
+
+  createNotification(text) {
+    this.setState({
+      notification: {
+        message: text
+      }
+    })
+  }
+
+  removeNotification() {
+    this.setState({
+      notification: undefined
+    })
   }
 
   componentDidMount() {
@@ -143,12 +158,18 @@ class Root extends React.Component {
     } else {
       return (
         <React.Fragment key="root_fragment">
-          <div>
+          <div className="progress-bar">
             {this.state.showProgress ? (
               <progress max="100" value={this.state.loading ? "50" : "0"} className="progress is-success is-small"></progress>
             ) : (<React.Fragment/>)}
           </div>
-          <div className="section">
+          {this.state.notification !== undefined ? (
+            <div className="notification notification-top-right">
+              <button className="delete" onClick={() => {this.removeNotification()}}></button>
+              {this.state.notification.message}
+            </div>
+          ) : (<React.Fragment/>)}
+          <div className="section button-section">
             <a className="button" onClick={(e) => {e.preventDefault(); this.reloadState()}}>
               Reload
             </a>
