@@ -2,13 +2,18 @@ class Root extends React.Component {
   constructor() {
     super()
     this.sortInputs = this.sortInputs.bind(this);
+    this.reloadState = this.reloadState.bind(this);
+  }
+
+  reloadState() {
+    $.getJSON('/api', (data) => {
+      this.setState({tf: data})
+    });
   }
 
   componentDidMount() {
     this.setState({});
-    $.getJSON('/api', (data) => {
-      this.setState({tf: data})
-    });
+    this.reloadState();
   }
 
   renderComment() {
@@ -127,6 +132,7 @@ class Root extends React.Component {
     } else {
       return (
         <React.Fragment key="root_fragment">
+          <a className="button" onClick={(e) => {e.preventDefault(); this.reloadState()}}>Reload</a>
           <div className="section">{this.renderComment()}</div>
           <div className="section">{this.renderInputs()}</div>
           <div className="section">{this.renderOutputs()}</div>
