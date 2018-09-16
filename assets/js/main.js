@@ -46,8 +46,8 @@ class Root extends React.Component {
       return default_obj !== null ? (
         <div className="variable-entry" key={entry[0]}>
           <h4>Default:</h4>
-          <b>Type: </b>{`${default_obj.Type}`}<br/>
-          <b>Value: </b><code>{`"${default_obj.Literal}"`}</code>
+          <i>Type: </i>{`${default_obj.Type}`}<br/>
+          <i>Value: </i><code>{`"${default_obj.Literal}"`}</code>
         </div>
       ) : (<React.Fragment key={entry[0]}/>);
     } else {
@@ -59,7 +59,7 @@ class Root extends React.Component {
       );
     }
   }
-  
+
   sortInputs(a,b) {
     if ((a.Default !== null && b.Default !== null)) {
       return a.Name.localeCompare(b.Name);
@@ -92,7 +92,7 @@ class Root extends React.Component {
                     }
                   {input.Name}
                   </p>
-                  <div className="panel-block">
+                  <div className="panel-block block_text content">
                     { Object.entries(input).map(this.parseInput) }
                   </div>
                 </div>
