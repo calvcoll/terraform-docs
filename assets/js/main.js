@@ -17,9 +17,9 @@ class Root extends React.Component {
         <div id="comment">
           <h2 className="title">Comment</h2>
           <code>
-            {this.state.tf.Comment.split('\n').map((line) => {
+            {this.state.tf.Comment.split('\n').map((line, index) => {
               return (
-                <React.Fragment>
+                <React.Fragment key={line + ` ${index}`}>
                   {line}
                   <br/>
                 </React.Fragment>
