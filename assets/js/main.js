@@ -6,13 +6,24 @@ class Root extends React.Component {
   }
 
   reloadState() {
+    this.setState({
+      loading: true,
+      showProgress: true
+    });
     $.getJSON('/api', (data) => {
-      this.setState({tf: data})
+      this.setState({
+        tf: data,
+        loading: false,
+        showProgress: false
+      })
     });
   }
 
   componentDidMount() {
-    this.setState({});
+    this.setState({
+      loading: false,
+      showProgress: false
+    });
     this.reloadState();
   }
 
@@ -132,7 +143,16 @@ class Root extends React.Component {
     } else {
       return (
         <React.Fragment key="root_fragment">
-          <a className="button" onClick={(e) => {e.preventDefault(); this.reloadState()}}>Reload</a>
+          <div>
+            {this.state.showProgress ? (
+              <progress max="100" value={this.state.loading ? "50" : "0"} className="progress is-success is-small"></progress>
+            ) : (<React.Fragment/>)}
+          </div>
+          <div className="section">
+            <a className="button" onClick={(e) => {e.preventDefault(); this.reloadState()}}>
+              Reload
+            </a>
+          </div>
           <div className="section">{this.renderComment()}</div>
           <div className="section">{this.renderInputs()}</div>
           <div className="section">{this.renderOutputs()}</div>
