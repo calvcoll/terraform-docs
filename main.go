@@ -56,13 +56,9 @@ const usage = `
 
 `
 
-func main() {
-	args, err := docopt.Parse(usage, nil, true, version, true)
-	if err != nil {
-		log.Fatal(err)
-	}
-
+func generateDocs(args map[string]interface{}) *doc.Doc {
 	var names []string
+
 	paths := args["<path>"].([]string)
 	for _, p := range paths {
 		pi, err := os.Stat(p)
@@ -100,7 +96,17 @@ func main() {
 	}
 
 	doc := doc.Create(files)
+	return doc
+}
+
+func main() {
+	args, err := docopt.Parse(usage, nil, true, version, true)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	printRequired := !args["--no-required"].(bool)
+	doc := generateDocs(args)
 
 	var out string
 
@@ -144,6 +150,8 @@ func main() {
 
 		http.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
+			doc := generateDocs(args)
+			out, err = print.JSON(doc) //load json
 			fmt.Fprintf(w, out)
 		})
 
@@ -155,7 +163,7 @@ func main() {
 		}
 
 		listenAddr := ":" + port
-		log.Println("Listening on localhost", listenAddr)
+		log.Println("Listening on localhost" + listenAddr)
 		http.ListenAndServe(listenAddr, nil)
 	}
 
