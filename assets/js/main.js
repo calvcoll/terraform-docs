@@ -12,7 +12,7 @@ class Root extends React.Component {
   }
 
   renderComment() {
-    if (this.state.tf.Comment) {
+    if (this.state.tf.Comment || this.state.tf.Comment !== "") {
       return (
         <div id="comment">
           <h2 className="title">Comment</h2>
@@ -37,7 +37,7 @@ class Root extends React.Component {
     } else if (entry[0] === "Description") {
       return entry[1] !== "" ? (
         <div className="variable-entry" key={entry[0]}>
-          <h4>{`${entry[0]}: `}</h4>
+          <h5>{`${entry[0]}: `}</h5>
           {`${entry[1]}`}
         </div>
       ) : (<React.Fragment key={entry[0]}/>);
@@ -45,7 +45,7 @@ class Root extends React.Component {
       let default_obj = entry[1];
       return default_obj !== null ? (
         <div className="variable-entry" key={entry[0]}>
-          <h4>Default:</h4>
+          <h5>Default:</h5>
           <i>Type: </i>{`${default_obj.Type}`}<br/>
           <i>Value: </i><code>{`"${default_obj.Literal}"`}</code>
         </div>
@@ -53,7 +53,7 @@ class Root extends React.Component {
     } else {
       return (
         <div className="variable-entry" key={entry[0]}>
-          <h4>{`${entry[0]}: `}</h4>
+          <h5>{`${entry[0]}: `}</h5>
           {`${entry[1]}`}
         </div>
       );
