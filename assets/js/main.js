@@ -1,11 +1,14 @@
 class Root extends React.Component {
   constructor() {
     super()
+    this.sortInputs = this.sortInputs.bind(this);
   }
 
   componentDidMount() {
     this.setState({});
-    $.getJSON('/api', (data) => {this.setState({tf: data})});
+    $.getJSON('/api', (data) => {
+      this.setState({tf: data})
+    });
   }
 
   renderComment() {
@@ -56,6 +59,18 @@ class Root extends React.Component {
       );
     }
   }
+  
+  sortInputs(a,b) {
+    if ((a.Default !== null && b.Default !== null)) {
+      return a.Name.localeCompare(b.Name);
+    } else if (a.Default !== null) {
+      return +1;
+    } else if (b.Default !== null) {
+      return -1;
+    } else {
+      return a.Name.localeCompare(b.Name);
+    }
+  }
 
   renderInputs() {
     if (this.state.tf.Inputs) {
@@ -63,7 +78,7 @@ class Root extends React.Component {
         <div id="columns inputs">
           <h2 className="title">Inputs</h2>
           {
-            this.state.tf.Inputs.map((input) => {
+            this.state.tf.Inputs.sort(this.sortInputs).map((input) => {
               const isRequired = input.Default === null;
               return (
                 <div className="panel variable" key={input.Name}>
